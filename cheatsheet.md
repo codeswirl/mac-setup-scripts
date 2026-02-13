@@ -1,144 +1,130 @@
-# Git Command Line Cheatsheet
-A quick reference for common day-to-day Git workflows.
+# Git CLI Cheatsheet (the commands you’ve been using)
+A practical list of Git + shell commands you’ve been asking about.
 
-## Setup & identity
+## Shell basics (macOS)
 ```bash
-# One-time identity (used for commits)
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
+ls                 # list files
+ls -la             # detailed list (incl dotfiles)
 
-# Check your config
-git config --list
+touch file.txt     # create an empty file (or update its timestamp)
+rm file.txt        # delete a file
+
+nano file.txt      # edit a file in the terminal
 ```
 
-## Repo basics
+## See what’s going on
 ```bash
-git init                # create a repo in the current directory
-git status              # working tree + staging status
-git add -A              # stage all changes (new/modified/deleted)
-git commit -m "Message" # create a commit
+git status         # most useful command: staged/unstaged + branch info
 ```
 
-## Viewing history
+## Stage changes (the “index”)
 ```bash
-git log
-git log --oneline --decorate --graph --all
+git add .          # stage changes in the current directory
 
-git show <commit>
+git diff           # see unstaged changes
+
+git diff --cached  # see staged changes
+
+git diff --name-only --cached  # list staged files only
 ```
 
-## Branches
+## Commit
 ```bash
-git branch              # local branches
-git branch -r           # remote-tracking branches (origin/*)
-git branch -a           # all
-
-git switch <branch>     # switch branches
-git switch -c <branch>  # create + switch
-
-git branch -d <branch>  # delete (safe)
-git branch -D <branch>  # delete (force)
+git commit -m "message"   # commit what’s staged
 ```
 
-## Remotes
+## Branches (local vs remote)
 ```bash
-git remote -v
+git branch         # list local branches
 
-git remote add origin <url>
-git remote set-url origin <url>
+git branch -r      # list remote-tracking branches (origin/*)
+
+git branch -a      # list all (local + remote-tracking)
+
+git branch -vv     # show each local branch + its upstream (tracking) + ahead/behind
+```
+
+## Switching / creating branches
+```bash
+git switch main                 # switch to main
+
+git switch -c test-branch       # create a new local branch from your current HEAD
+
+# create a new local branch from the remote main (good when you want latest remote state)
+git fetch origin
+
+git switch -c my-branch origin/main
+```
+
+## Upstream (tracking) in one minute
+- Your local branch can “track” a remote branch (its **upstream**), like `main` → `origin/main`.
+- When upstream is set, plain `git push` and `git pull` know where to push/pull.
+
+Useful commands:
+```bash
+# show the upstream for the current branch (errors if none)
+git rev-parse --abbrev-ref @{u}
+
+# set upstream the first time you push a new branch
+git push -u origin test-branch
 ```
 
 ## Fetch vs pull
 ```bash
-git fetch origin        # download updates into origin/*, no working-tree changes
+git fetch          # download updates into origin/* (does NOT change your files)
 
-# inspect what changed after fetching
-git log --oneline main..origin/main
+git pull           # fetch + integrate into your current branch
 
-git pull                # fetch + integrate into current branch (merge by default)
-git pull --rebase       # fetch + rebase current branch on top of remote
+git pull --ff-only # update only if it can fast-forward (no merge commit)
 ```
 
-## Pushing
+## Clean up remote-tracking branches
 ```bash
-git push                # push current branch to its upstream (if set)
-git push -u origin main # first push: set upstream tracking
+git fetch -p        # prune deleted remote branches from origin/* locally
 ```
 
-## Staging / unstaging
+## Push
 ```bash
-git add <file>
-git restore --staged <file>  # unstage (keep working copy changes)
+git push                 # push to your branch’s upstream (if set)
 
-git diff                    # unstaged vs staged? (working tree vs index)
-git diff --staged           # staged vs last commit
+git push origin main     # push a specific local branch to origin
+
+git push -u origin main  # push + set upstream (common on first push)
+
+git push origin test-branch
 ```
 
-## Undoing changes (careful)
+## Delete branches
+### Delete a local branch
+You can’t delete the branch you’re currently on—switch off it first.
+
 ```bash
-git restore <file>       # discard working-copy changes to file
+git switch main
 
-git revert <commit>      # create a new commit that undoes an old commit (safe for shared branches)
+git branch -d test-branch   # safe delete (only if merged)
 
-git reset --soft HEAD~1  # undo last commit, keep changes staged
-
-git reset --mixed HEAD~1 # undo last commit, keep changes unstaged (default)
-
-git reset --hard HEAD~1  # DANGER: discard commit + working changes
+git branch -D test-branch   # force delete
 ```
 
-## Stash (temporary shelf)
+### Delete a remote branch
 ```bash
-git stash push -m "wip"
-git stash list
-git stash pop            # re-apply and remove
+git push origin --delete my-feature-branch
 ```
 
-## Merging & rebasing
+## Remotes
 ```bash
-# merge <branch> into current branch
-git merge <branch>
+git remote -v         # see remote URLs
 
-# rebase current branch on top of <base>
-git rebase <base>
-
-# resolve conflicts, then:
-git add -A
-git rebase --continue
+git remote show origin # see what branches/tracking info origin has
 ```
 
-## Tags
+## Repo setup / clone (common when bootstrapping)
 ```bash
-git tag                  # list tags
-git tag v1.0.0           # create lightweight tag
-git push --tags          # push tags
-```
+git init
 
-## Useful inspection
-```bash
-git blame <file>
+git remote add origin git@github.com:OWNER/REPO.git
 
-git reflog               # recovery log for HEAD movements (great for "oops" moments)
-```
-
-## Common patterns
-### Update your branch safely
-```bash
 git fetch origin
-git log --oneline --decorate --graph main..origin/main
-# then choose:
-git merge origin/main
-# or:
-git rebase origin/main
-```
 
-### Clone over SSH
-```bash
 git clone git@github.com:OWNER/REPO.git
 ```
-
-## Quick glossary
-- **Working tree**: your files on disk
-- **Index / Staging area**: what will go into the next commit
-- **Local branch**: a branch name in your repo (e.g. `main`)
-- **Remote-tracking branch**: your local snapshot of a remote branch (e.g. `origin/main`)
