@@ -16,7 +16,7 @@ Commands:
   help                         Show this help
 
 Examples:
-  ./run.sh dev-tools
+  ./run.sh install-dev-tools
   ./run.sh github-ssh-key you@example.com
   ./run.sh github-ssh-key you@example.com id_ed25519_github_work
 EOF
@@ -24,7 +24,7 @@ EOF
 
 list_commands() {
   echo "Available commands:"
-  echo "  dev-tools"
+  echo "  install-dev-tools"
   echo "  github-ssh-key"
 }
 

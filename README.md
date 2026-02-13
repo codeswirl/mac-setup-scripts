@@ -22,7 +22,7 @@ Installs Homebrew (if missing) and then installs the following casks:
 - Warp
 
 ```bash
-./run.sh dev-tools
+./run.sh install-dev-tools
 ```
 
 #### Generate an SSH key for GitHub
