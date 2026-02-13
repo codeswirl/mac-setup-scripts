@@ -11,13 +11,35 @@ fi
 echo "Updating Homebrew..."
 brew update
 
-echo "Installing Cursor..."
-brew install --cask cursor
+install_cask() {
+  local cask="$1"
 
-echo "Installing Claude..."
-brew install --cask claude
+  echo "Installing cask: ${cask}..."
+  if brew install --cask "$cask"; then
+    echo "Installed cask: ${cask}"
+  else
+    echo "Failed to install cask: ${cask}; skipping."
+  fi
+}
 
-echo "Installing Warp..."
-brew install --cask warp
+install_formula() {
+  local formula="$1"
 
-echo "All requested tools are installed."
+  echo "Installing formula: ${formula}..."
+  if brew install "$formula"; then
+    echo "Installed formula: ${formula}"
+  else
+    echo "Failed to install formula: ${formula}; skipping."
+  fi
+}
+
+install_cask cursor
+
+# Claude: prefer CLI (Homebrew formula) rather than the Claude desktop app (cask).
+# Note: if Homebrew doesn't have a CLI formula named "claude" on your system,
+# this will fail and the script will continue.
+install_formula claude
+
+install_cask warp
+
+echo "Done. (Any failed installs were skipped.)"
