@@ -15,7 +15,7 @@ rm file.txt        # delete a file
 nano file.txt      # edit a file in the terminal
 ```
 
-## See what’s going on
+## See what’s going on ->
 ```bash
 git status         # most useful command: staged/unstaged + branch info
 ```
