@@ -4,6 +4,11 @@ A practical list of Git + shell commands you’ve been asking about.
 ## Use this for a Visual
 git log --oneline --graph --decorate --all
 
+##To branch off another branch:
+
+git switch -c new-branch existing-branch
+
+
 ## Shell basics (macOS)
 ```bash
 ls                 # list files
