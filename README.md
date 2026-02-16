@@ -16,38 +16,59 @@ chmod +x run.sh
 
 ### Available commands
 #### Install apps via Homebrew
-Installs Homebrew (if missing) and then installs the following casks:
-- Cursor
-- Claude
-- Warp
+Installs Homebrew (if missing) and then installs:
+- Cursor (cask)
+- Claude CLI (formula; will be skipped if unavailable)
+- Warp (cask)
 
 ```bash
-./run.sh install-dev-tools
+./run.sh dev-tools
 ```
 
-#### Generate an SSH key for GitHub
+#### Generate an SSH key for GitHub (supports multiple profiles)
 Generates an `ed25519` SSH key you can add to GitHub as an **Authentication Key**.
 
-Default key path:
-- `~/.ssh/id_ed25519_github`
+This script supports multiple GitHub accounts by creating a profile-specific key and (by default) writing an SSH config host alias.
 
-Run interactively (prompts for your GitHub email):
+Defaults:
+- Profile: `default`
+- Key path: `~/.ssh/id_ed25519_github_<profile>`
+- SSH host alias: `github.com-<profile>`
+
+Run interactively (prompts for email):
 ```bash
 ./run.sh github-ssh-key
 ```
 
-Run with email (no prompt):
+Personal profile:
 ```bash
-./run.sh github-ssh-key you@example.com
+./run.sh github-ssh-key --profile personal --email you@gmail.com
 ```
 
-Optional: choose a different key filename (2nd arg):
+Work profile:
 ```bash
-./run.sh github-ssh-key you@example.com id_ed25519_github_work
+./run.sh github-ssh-key --profile work --email you@company.com
+```
+
+Optional: choose a different key filename:
+```bash
+./run.sh github-ssh-key --profile work --email you@company.com --key-name id_ed25519_github_work
 ```
 
 After running, the script copies your public key to the clipboard (when available). Add it in GitHub:
 Settings → **SSH and GPG keys** → **New SSH key** → Key type: **Authentication Key**.
+
+Use the profile with git remotes by using the SSH host alias in your URLs:
+```bash
+git clone git@github.com-work:OWNER/REPO.git
+# or update an existing remote:
+git remote set-url origin git@github.com-personal:OWNER/REPO.git
+```
+
+Test SSH auth for a profile:
+```bash
+ssh -T git@github.com-work
+```
 
 ### Running scripts directly (no wrapper)
 You can also run the scripts in `scripts/` directly:
@@ -55,7 +76,7 @@ You can also run the scripts in `scripts/` directly:
 ```bash
 chmod +x scripts/setup-dev-tools.sh scripts/generate-github-ssh-key.sh
 ./scripts/setup-dev-tools.sh
-./scripts/generate-github-ssh-key.sh you@example.com
+./scripts/generate-github-ssh-key.sh --profile personal --email you@gmail.com
 ```
 
 ## Git cheatsheet
