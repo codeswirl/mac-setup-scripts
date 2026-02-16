@@ -1,13 +1,10 @@
-#Test Header
-
-
-# Git CLI Cheatsheet (the commands you’ve been using)
+# Git CLI Cheatsheet
 A practical list of Git + shell commands you’ve been asking about.
 
 ## Use this for a Visual
 git log --oneline --graph --decorate --all
 
-##To branch off another branch:
+## Branch off another branch:
 
 git switch -c new-branch existing-branch
 
